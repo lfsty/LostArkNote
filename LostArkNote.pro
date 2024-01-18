@@ -9,24 +9,26 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    character.cpp \
-    charactersetting.cpp \
+    src/character.cpp \
+    src/charactersetting.cpp \
     main.cpp \
     mainwindow.cpp \
-    todosinglewidget.cpp
+    src/todosinglewidget.cpp
 
 HEADERS += \
-    INFO.h \
-    character.h \
-    charactersetting.h \
+    src/INFO.h \
+    src/character.h \
+    src/charactersetting.h \
     mainwindow.h \
-    todosinglewidget.h
+    src/todosinglewidget.h
 
 FORMS += \
-    character.ui \
-    charactersetting.ui \
+    src/character.ui \
+    src/charactersetting.ui \
     mainwindow.ui \
-    todosinglewidget.ui
+    src/todosinglewidget.ui
+
+INCLUDEPATH += ./src
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

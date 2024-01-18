@@ -17,6 +17,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QCloseEvent>
+#include <QMessageBox>
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -29,23 +30,28 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 private:
-    QVector<Character *> m_vect_character;
+    QVector<Character*> m_vect_character;
     QVector<ToDoSingleStruct> m_AllToDoList;
 private:
-    void read_AllToDoList(const QString &file_path);
+    void read_AllToDoList(const QString& file_path);
+    void read_ExistData(const QString& file_path);
+    void clear_ToDoList();
 private slots:
     void on_action_triggered();
-    void closeEvent(QCloseEvent *event);
-    void OnUpdateToDoListUI(const int &index_character, const QVector<ToDoSingleStruct> &todolist_str);
-    void OnUpdateToDoListFinished(const int &index_character, const ToDoSingleStruct &todo_list_struct);
+    void closeEvent(QCloseEvent* event);
+    void OnUpdateToDoListUI(const int& index_character, const QVector<ToDoSingleStruct>& todolist_str);
+    void OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct);
+    void AddNewCharacter(Character* new_character);
+    void on_action_3_triggered();
+
 private:
     //文件存储相关
     QString m_savefile_dir_path;
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 };
 #endif // MAINWINDOW_H

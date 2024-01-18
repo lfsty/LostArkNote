@@ -2,6 +2,9 @@
 #define INFO_H
 #include <QString>
 
+#define DEFAULTCONFIGNAME "config.json"
+#define DEFAULTFINISHEDDATANAME "data.json"
+
 struct ToDoSingleStruct
 {
     QString name;

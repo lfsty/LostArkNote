@@ -43,8 +43,8 @@ ToDoSingleWidget:hover#ToDoSingleWidget
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>309</width>
-          <height>400</height>
+          <width>308</width>
+          <height>396</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -80,8 +80,8 @@ ToDoSingleWidget:hover#ToDoSingleWidget
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
-          <height>400</height>
+          <width>307</width>
+          <height>396</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -115,7 +115,7 @@ ToDoSingleWidget:hover#ToDoSingleWidget
      <x>0</x>
      <y>0</y>
      <width>636</width>
-     <height>17</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -123,12 +123,19 @@ ToDoSingleWidget:hover#ToDoSingleWidget
      <string>开始</string>
     </property>
     <addaction name="action"/>
+    <addaction name="separator"/>
+    <addaction name="action_3"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <action name="action">
    <property name="text">
     <string>添加角色</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>周三啦</string>
    </property>
   </action>
  </widget>
