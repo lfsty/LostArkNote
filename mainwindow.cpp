@@ -34,6 +34,14 @@ MainWindow::MainWindow(QWidget* parent)
         read_ExistData(_existed_data_path);
     }
 
+    QString _existed_ini_path = _dir.absoluteFilePath(DEFAULTAPPCONFIGNAME);
+    QSettings _app_setting(_existed_ini_path, QSettings::IniFormat);
+    int _height = _app_setting.value("Height").toInt();
+    int _width = _app_setting.value("Width").toInt();
+    if(_height != 0 && _width != 0)
+    {
+        this->resize(_width, _height);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -159,6 +167,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
         _save_finish_data.write(_save_json.toJson());
         _save_finish_data.close();
     }
+
+
+    QString _existed_ini_path = _dir.absoluteFilePath(DEFAULTAPPCONFIGNAME);
+    QSettings _app_setting(_existed_ini_path, QSettings::IniFormat);
+    _app_setting.setValue("Height", this->height());
+    _app_setting.setValue("Width", this->width());
 }
 
 void MainWindow::OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct)

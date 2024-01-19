@@ -7,7 +7,7 @@
 #include "INFO.h"
 #include <QVector>
 #include <QMap>
-
+#include <QSettings>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonParseError>

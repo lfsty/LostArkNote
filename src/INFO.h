@@ -4,6 +4,7 @@
 
 #define DEFAULTCONFIGNAME "config.json"
 #define DEFAULTFINISHEDDATANAME "data.json"
+#define DEFAULTAPPCONFIGNAME "config.ini"
 
 struct ToDoSingleStruct
 {
