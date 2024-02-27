@@ -18,6 +18,8 @@
 #include <QDir>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -47,6 +49,8 @@ private slots:
     void OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct);
     void AddNewCharacter(Character* new_character);
     void on_action_3_triggered();
+
+    void on_action_4_triggered();
 
 private:
     //文件存储相关

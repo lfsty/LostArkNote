@@ -232,3 +232,10 @@ void MainWindow::on_action_3_triggered()
     clear_ToDoList();
 }
 
+
+void MainWindow::on_action_4_triggered()
+{
+//    qDebug() << m_savefile_dir_path;
+    QDesktopServices::openUrl(QUrl("file:" + m_savefile_dir_path, QUrl::TolerantMode));
+}
+
