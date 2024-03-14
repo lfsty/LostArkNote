@@ -164,22 +164,29 @@ void Character::ClearAllFinished()
 void Character::updateStatus()
 {
     bool _status = true;
+    int _remain_num = 0;
     for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
     {
         if(iter->is_show == true)
         {
             _status &= iter->is_finished;
+            if(iter->is_finished == false)
+                _remain_num++;
         }
     }
+
+    ui->m_label_remain_num->setText(QString("剩余：") + QString::number(_remain_num));
 
     if(_status == true)
     {
         ui->m_label_character_score->setStyleSheet("color:green;");
         ui->m_label_nickName->setStyleSheet("color:green;");
+        ui->m_label_remain_num->setStyleSheet("color:green;");
     }
     else
     {
         ui->m_label_character_score->setStyleSheet("color:red;");
         ui->m_label_nickName->setStyleSheet("color:red;");
+        ui->m_label_remain_num->setStyleSheet("color:red;");
     }
 }
