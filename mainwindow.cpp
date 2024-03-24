@@ -69,6 +69,7 @@ void MainWindow::read_AllToDoList(const QString& file_path)
         _todolist_struct.name = _single_obj["name"].toString();
         _todolist_struct.low_limit = _single_obj["limit"].toArray()[0].toInt();
         _todolist_struct.high_limit = _single_obj["limit"].toArray()[1].toInt();
+        _todolist_struct.is_twoWeek = _single_obj["twoWeek"].toBool(false);
         m_AllToDoList.append(_todolist_struct);
     }
 }
@@ -221,21 +222,49 @@ void MainWindow::OnUpdateToDoListUI(const int& index_character, const QVector<To
 
 void MainWindow::on_action_3_triggered()
 {
-    QMessageBox::StandardButton _button  = QMessageBox::question(this, "请求确认", "确定到周三了嘛，要清空了哦~", QMessageBox::Yes | QMessageBox::No, QMessageBox::NoButton);
-    if (_button == QMessageBox::StandardButton::Yes)
+//    QMessageBox::StandardButton _button  = QMessageBox::question(this, "请求确认", "确定到周三了嘛，要清空了哦~", QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll, QMessageBox::NoButton);
+
+    QMessageBox _two_week_check_msgbox = QMessageBox(this);
+    _two_week_check_msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel);
+    _two_week_check_msgbox.setWindowTitle("请求确认");
+    _two_week_check_msgbox.setText("确定到周三了嘛，要清空了哦~\n选一下单周还是双周哦~");
+    _two_week_check_msgbox.button(QMessageBox::Yes)->setText("单周");
+    _two_week_check_msgbox.button(QMessageBox::YesToAll)->setText("双周");
+    _two_week_check_msgbox.button(QMessageBox::Cancel)->setText("点错啦");
+
+    switch(_two_week_check_msgbox.exec())
     {
-        for(int i = 0; i < m_vect_character.size(); i++)
-        {
-            m_vect_character[i]->ClearAllFinished();
-        }
+        case QMessageBox::Yes:
+            {
+                //单周
+                for(int i = 0; i < m_vect_character.size(); i++)
+                {
+                    m_vect_character[i]->ClearAllFinished(false);
+                }
+                clear_ToDoList();
+                break;
+            }
+        case QMessageBox::YesToAll:
+            {
+                //双周
+                for(int i = 0; i < m_vect_character.size(); i++)
+                {
+                    m_vect_character[i]->ClearAllFinished(true);
+                }
+                clear_ToDoList();
+                break;
+            }
+        case QMessageBox::Cancel:
+            {
+                break;
+            }
     }
-    clear_ToDoList();
+
 }
 
 
 void MainWindow::on_action_4_triggered()
 {
-//    qDebug() << m_savefile_dir_path;
     QDesktopServices::openUrl(QUrl("file:" + m_savefile_dir_path, QUrl::TolerantMode));
 }
 

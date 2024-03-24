@@ -41,7 +41,7 @@ public:
     void UpdateToDoListFinished(const ToDoSingleStruct& single_struct);
     QJsonObject GenSaveFile();
     void SetCharacterIndex(const int& index);
-    void ClearAllFinished();
+    void ClearAllFinished(bool is_two_week);
 private:
     //UI相关
     QMenu m_menu;

@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QAbstractButton>
 QT_BEGIN_NAMESPACE
 namespace Ui
 {

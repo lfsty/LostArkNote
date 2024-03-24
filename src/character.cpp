@@ -152,11 +152,23 @@ void Character::SetCharacterIndex(const int& index)
     m_index_character = index;
 }
 
-void Character::ClearAllFinished()
+void Character::ClearAllFinished(bool is_two_week)
 {
     for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
     {
-        iter->is_finished = false;
+        if(is_two_week == false)
+        {
+            //单周
+            if(iter->is_twoWeek == false)
+            {
+                iter->is_finished = false;
+            }
+        }
+        else
+        {
+            //双周
+            iter->is_finished = false;
+        }
     }
     updateStatus();
 }

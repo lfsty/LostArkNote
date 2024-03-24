@@ -13,6 +13,7 @@ struct ToDoSingleStruct
     int high_limit;
     bool is_finished = false;
     bool is_show = false;
+    bool is_twoWeek = false;
 };
 
 #endif // INFO_H
