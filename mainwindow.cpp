@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget* parent)
     QFileInfo _fileInfo(_config_file_path);
     if(!_fileInfo.isFile())
     {
-        QFile::copy(":/doc/DefaultConfig.json", _config_file_path);
+        // 副本设置文件不存在
+//        QFile::copy(":/doc/DefaultConfig.json", _config_file_path);
     }
 
     read_AllToDoList(_config_file_path);
@@ -60,7 +61,7 @@ void MainWindow::read_AllToDoList(const QString& file_path)
         return;
     }
 
-    QJsonArray _rootList = _jsonDoc.array();
+    QJsonArray _rootList = _jsonDoc.object()["data"].toArray();
     for(int i = 0; i < _rootList.size(); i++)
     {
         QJsonObject _single_obj = _rootList[i].toObject();
