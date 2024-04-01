@@ -24,6 +24,7 @@ MainWindow::~MainWindow()
 //读取副本配置信息
 void MainWindow::read_AllToDoList(const QString& file_path)
 {
+    m_AllToDoList.clear();
     QJsonDocument _json_doc = GetJsonDocumentFromFile(file_path);
 
     if(_json_doc.isEmpty())
