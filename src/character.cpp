@@ -1,7 +1,7 @@
 #include "character.h"
 #include "ui_character.h"
 #include <QDebug>
-Character::Character(const int& index_character, const QVector<ToDoSingleStruct>& AllToDoList, QWidget* parent, QString nick_name, double score, const QVector<ToDoSingleStruct>& exist_data) :
+Character::Character(const int& index_character, const QVector<ToDoSingleStruct>& AllToDoList, QWidget* parent, QString nick_name, double score) :
     QWidget(parent),
     ui(new Ui::Character),
     m_character_nick_name(nick_name),
@@ -12,9 +12,6 @@ Character::Character(const int& index_character, const QVector<ToDoSingleStruct>
     ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground);
     setContextMenuPolicy(Qt::DefaultContextMenu);
-
-    connect(this, &Character::sig_character_nick_name_changed, this, &Character::OnCharacterNickNameChanged);
-    connect(this, &Character::sig_character_score_changed, this, &Character::OnCharacterScoreChanged);
 
     {
         //右键菜单
@@ -28,12 +25,13 @@ Character::Character(const int& index_character, const QVector<ToDoSingleStruct>
                 double new_character_score = _character_setting_dlg.GetCharacterScore();
                 if(new_character_nick_name != m_character_nick_name)
                 {
-                    emit sig_character_nick_name_changed(new_character_nick_name);
+                    m_character_nick_name = new_character_nick_name;
                 }
                 if(new_character_score != m_character_score)
                 {
-                    emit sig_character_score_changed(new_character_score);
+                    m_character_score = new_character_score;
                 }
+                updateLeftStatusDisplay();
             }
         });
 
@@ -48,19 +46,7 @@ Character::Character(const int& index_character, const QVector<ToDoSingleStruct>
         m_menu.addAction(_action_delete);
     }
 
-    for(auto item : exist_data)
-    {
-        for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
-        {
-            if(item.name == iter->name)
-            {
-                iter->is_finished = item.is_finished;
-            }
-        }
-    }
-
-    emit sig_character_nick_name_changed(nick_name);
-    emit sig_character_score_changed(score);
+    updateLeftStatusDisplay();
 }
 
 Character::~Character()
@@ -72,8 +58,7 @@ void Character::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::LeftButton)
     {
-        UpdateToDoListUI();
-        emit sig_checked(m_index_character);
+        emit sig_character_checked(m_index_character, m_AllToDoList);
     }
 }
 
@@ -82,36 +67,10 @@ void Character::contextMenuEvent(QContextMenuEvent* event)
     m_menu.exec(event->globalPos());
 }
 
-void Character::OnCharacterNickNameChanged(const QString& nick_name)
+void Character::UpdateAllToDoListVector(const QVector<ToDoSingleStruct>& AllToDoList)
 {
-    m_character_nick_name = nick_name;
-    ui->m_label_nickName->setText(nick_name);
-}
-
-void Character::OnCharacterScoreChanged(const double& score)
-{
-    m_character_score = score;
-    ui->m_label_character_score->setText(QString::number(score));
-
-    for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
-    {
-        if(m_character_score >= iter->low_limit && m_character_score < iter->high_limit)
-        {
-            iter->is_show = true;
-        }
-        else
-        {
-            iter->is_show = false;
-        }
-    }
-
-    UpdateToDoListUI();
-    updateStatus();
-}
-
-void Character::UpdateToDoListUI()
-{
-    emit sig_update_todo_list(m_index_character, m_AllToDoList);
+    m_AllToDoList = CompareData_IsFinished(m_AllToDoList, AllToDoList);
+    updateLeftStatusDisplay();
 }
 
 void Character::UpdateToDoListFinished(const ToDoSingleStruct& single_struct)
@@ -121,11 +80,13 @@ void Character::UpdateToDoListFinished(const ToDoSingleStruct& single_struct)
         if(m_AllToDoList[i].name == single_struct.name)
         {
             m_AllToDoList[i].is_finished = single_struct.is_finished;
+            break;
         }
     }
-    updateStatus();
+    updateLeftStatusDisplay();
 }
 
+//生成完成信息的保存配置文件
 QJsonObject Character::GenSaveFile()
 {
     QJsonObject _root_obj;
@@ -152,6 +113,7 @@ void Character::SetCharacterIndex(const int& index)
     m_index_character = index;
 }
 
+//清空角色完成信息
 void Character::ClearAllFinished(bool is_two_week)
 {
     for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
@@ -170,18 +132,37 @@ void Character::ClearAllFinished(bool is_two_week)
             iter->is_finished = false;
         }
     }
-    updateStatus();
+    updateLeftStatusDisplay();
 }
 
-void Character::updateStatus()
+//更新左侧的信息显示
+void Character::updateLeftStatusDisplay()
 {
-    bool _status = true;
+    //更新左侧的UI 显示名称和装分
+    ui->m_label_nickName->setText(m_character_nick_name);
+    ui->m_label_character_score->setText(QString::number(m_character_score));
+
+    //更新装分对应的副本
+    for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
+    {
+        if(m_character_score >= iter->low_limit && m_character_score < iter->high_limit)
+        {
+            iter->is_show = true;
+        }
+        else
+        {
+            iter->is_show = false;
+        }
+    }
+
+    // 计算剩余副本数
+    bool _is_finished_status = true;
     int _remain_num = 0;
     for(auto iter = m_AllToDoList.begin(); iter != m_AllToDoList.end(); iter++)
     {
         if(iter->is_show == true)
         {
-            _status &= iter->is_finished;
+            _is_finished_status &= iter->is_finished;
             if(iter->is_finished == false)
                 _remain_num++;
         }
@@ -189,7 +170,8 @@ void Character::updateStatus()
 
     ui->m_label_remain_num->setText(QString("剩余：") + QString::number(_remain_num));
 
-    if(_status == true)
+    //更新颜色
+    if(_is_finished_status == true)
     {
         ui->m_label_character_score->setStyleSheet("color:green;");
         ui->m_label_nickName->setStyleSheet("color:green;");

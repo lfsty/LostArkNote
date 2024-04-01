@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>doc/DefaultConfig.json</file>
-    </qresource>
-</RCC>

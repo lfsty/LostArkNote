@@ -122,27 +122,33 @@ ToDoSingleWidget:hover#ToDoSingleWidget
     <property name="title">
      <string>开始</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="add_character"/>
     <addaction name="separator"/>
-    <addaction name="action_3"/>
+    <addaction name="clean_finished_status"/>
     <addaction name="separator"/>
-    <addaction name="action_4"/>
+    <addaction name="open_config_dir"/>
+    <addaction name="update_config"/>
    </widget>
    <addaction name="menu"/>
   </widget>
-  <action name="action">
+  <action name="add_character">
    <property name="text">
     <string>添加角色</string>
    </property>
   </action>
-  <action name="action_3">
+  <action name="clean_finished_status">
    <property name="text">
     <string>周三啦</string>
    </property>
   </action>
-  <action name="action_4">
+  <action name="open_config_dir">
    <property name="text">
     <string>打开配置文件夹</string>
+   </property>
+  </action>
+  <action name="update_config">
+   <property name="text">
+    <string>更新配置文件</string>
    </property>
   </action>
  </widget>

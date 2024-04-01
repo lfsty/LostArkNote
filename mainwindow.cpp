@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget* parent)
     ui->splitter->setStretchFactor(0, 3);
     ui->splitter->setStretchFactor(1, 7);
 
+    m_downloadFile = new DownloadFile(this);
+
+    //获取可读写位置
     m_savefile_dir_path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     QDir _dir(m_savefile_dir_path);
     if(!_dir.exists(m_savefile_dir_path))
@@ -17,51 +20,31 @@ MainWindow::MainWindow(QWidget* parent)
         _dir.mkdir(m_savefile_dir_path);
     }
 
-    QString _config_file_path = _dir.absoluteFilePath(DEFAULTCONFIGNAME);
-    QFileInfo _fileInfo(_config_file_path);
-    if(!_fileInfo.isFile())
-    {
-        // 副本设置文件不存在
-//        QFile::copy(":/doc/DefaultConfig.json", _config_file_path);
-    }
+    //默认副本设置文件保存地址
+    m_config_path = _dir.absoluteFilePath(DEFAULTCONFIGNAME);
+    //默认角色及副本完成情况保存地址
+    m_finished_config_path = _dir.absoluteFilePath(DEFAULTFINISHEDDATANAME);
 
-    read_AllToDoList(_config_file_path);
-
-
-    QString _existed_data_path = _dir.absoluteFilePath(DEFAULTFINISHEDDATANAME);
-    _fileInfo.setFile(_existed_data_path);
-    if(_fileInfo.isFile())
-    {
-        read_ExistData(_existed_data_path);
-    }
+    connect(m_downloadFile, &DownloadFile::downloadFinished, this, &MainWindow::update_Config);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    m_downloadFile->deleteLater();
 }
 
+//读取副本配置信息
 void MainWindow::read_AllToDoList(const QString& file_path)
 {
-    QFile _loadFile(file_path);
+    QJsonDocument _json_doc = GetJsonDocumentFromFile(file_path);
 
-    if(!_loadFile.open(QIODevice::ReadOnly))
+    if(_json_doc.isEmpty())
     {
-        qDebug() << "文件打开失败" << file_path;
-        return;
-    }
-    QByteArray _allData = _loadFile.readAll();
-    _loadFile.close();
-
-    QJsonParseError _jsonError;
-    QJsonDocument _jsonDoc(QJsonDocument::fromJson(_allData, &_jsonError));
-    if(_jsonError.error != QJsonParseError::NoError)
-    {
-        qDebug() << "json error!" << _jsonError.errorString();
         return;
     }
 
-    QJsonArray _rootList = _jsonDoc.object()["data"].toArray();
+    QJsonArray _rootList = _json_doc.object()["data"].toArray();
     for(int i = 0; i < _rootList.size(); i++)
     {
         QJsonObject _single_obj = _rootList[i].toObject();
@@ -75,33 +58,14 @@ void MainWindow::read_AllToDoList(const QString& file_path)
     }
 }
 
-void MainWindow::read_ExistData(const QString& file_path)
+void MainWindow::read_finished_data(const QString& file_path)
 {
-    QFile _loadFile(file_path);
-
-    if(!_loadFile.open(QIODevice::ReadOnly))
-    {
-        qDebug() << "文件打开失败" << file_path;
-        return;
-    }
-    QByteArray _allData = _loadFile.readAll();
-    _loadFile.close();
-
-    QJsonParseError _jsonError;
-    QJsonDocument _jsonDoc(QJsonDocument::fromJson(_allData, &_jsonError));
-    if(_jsonError.error != QJsonParseError::NoError)
-    {
-        qDebug() << "json error!" << _jsonError.errorString();
-        return;
-    }
-
-    QJsonArray _rootList = _jsonDoc.array();
-
+    QJsonArray _rootList = GetJsonDocumentFromFile(file_path).array();
 
     for(int i = 0; i < _rootList.size(); i++)
     {
         QJsonObject _single_obj = _rootList[i].toObject();
-        QVector<ToDoSingleStruct> _exist_data_map;
+        QVector<ToDoSingleStruct> _finished_data;
 
         QString _character_name = _single_obj["name"].toString();
         double _character_score = _single_obj["score"].toDouble();
@@ -112,10 +76,10 @@ void MainWindow::read_ExistData(const QString& file_path)
             ToDoSingleStruct _todo_single_struct;
             _todo_single_struct.is_finished = _todo_single_obj["isFinish"].toBool();
             _todo_single_struct.name = _todo_single_obj["name"].toString();
-            _exist_data_map.append(_todo_single_struct);
+            _finished_data.push_back(_todo_single_struct);
         }
 
-        Character* _new_character = new Character(m_vect_character.size(), m_AllToDoList, this, _character_name, _character_score, _exist_data_map);
+        Character* _new_character = new Character(m_vect_character.size(), CompareData_IsFinished(_finished_data, m_AllToDoList), this, _character_name, _character_score);
         AddNewCharacter(_new_character);
     }
 }
@@ -132,12 +96,63 @@ void MainWindow::clear_ToDoList()
     }
 }
 
-
-void MainWindow::on_action_triggered()
+void MainWindow::update_Config(const QByteArray& data)
 {
-    Character* _new_character = new Character(m_vect_character.size(), m_AllToDoList, this);
-    AddNewCharacter(_new_character);
-    _new_character->UpdateToDoListUI();
+    bool _is_overwrite = false;
+
+    QFileInfo _fileInfo;
+    _fileInfo.setFile(m_config_path);
+    if(!_fileInfo.isFile())
+    {
+        _is_overwrite = true;
+    }
+    else
+    {
+        //副本设置文件存在，比较版本号，保留较新的文件
+
+        QJsonDocument _old_json_doc = GetJsonDocumentFromFile(m_config_path);
+        if(_old_json_doc.isEmpty())
+        {
+            _is_overwrite = true;
+        }
+        else
+        {
+            double _old_version_num = _old_json_doc.object()["version"].toDouble();
+            QJsonDocument _new_json_doc = GetJsonDocumentFromByteArray(data);
+            double _new_version_num = _new_json_doc.object()["version"].toDouble();
+            if(_new_version_num > _old_version_num)
+            {
+                if(QMessageBox::question(this, "提示", "检测到新版本，是否跟新？", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+                {
+                    _is_overwrite = true;
+                }
+            }
+            else
+            {
+                QMessageBox::information(this, "提示", "已经是最新版本拉", QMessageBox::Yes);
+            }
+        }
+    }
+
+
+    if(_is_overwrite)
+    {
+        // 副本设置文件不存在或需要更新
+        QFile _file(m_config_path);
+        if (_file.open(QFile::WriteOnly | QFile::Truncate))
+        {
+            _file.write(data);
+            _file.close();
+        }
+
+        read_AllToDoList(m_config_path);
+
+        for(auto iter : m_vect_character)
+        {
+            iter->UpdateAllToDoListVector(m_AllToDoList);
+        }
+    }
+
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -150,7 +165,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QJsonDocument _save_json(_allCharacter_status_obj);
 
     QDir _dir(m_savefile_dir_path);
-    QFile _save_finish_data(_dir.absoluteFilePath(DEFAULTFINISHEDDATANAME));
+    QFile _save_finish_data(m_finished_config_path);
     if(!_save_finish_data.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         qDebug() << "保存文件打开出错";
@@ -178,7 +193,7 @@ void MainWindow::OnUpdateToDoListFinished(const int& index_character, const ToDo
 void MainWindow::AddNewCharacter(Character* new_character)
 {
     m_vect_character.push_back(new_character);
-    connect(new_character, &Character::sig_update_todo_list, this, &MainWindow::OnUpdateToDoListUI);
+    connect(new_character, &Character::sig_character_checked, this, &MainWindow::OnUpdateToDoListUI);
     ui->m_verticalLayout_character->insertWidget(ui->m_verticalLayout_character->indexOf(ui->m_verticalSpacer_character), new_character);
     connect(new_character, &Character::sig_delete, this, [ = ](const int& index)
     {
@@ -190,25 +205,23 @@ void MainWindow::AddNewCharacter(Character* new_character)
         clear_ToDoList();
     });
 
-    connect(new_character, &Character::sig_checked, this, [ = ](const int& index)
-    {
-        for(int i = 0; i < m_vect_character.size(); i++)
-        {
-            if(i != index)
-            {
-                m_vect_character[i]->setStyleSheet("");
-            }
-            else
-            {
-                m_vect_character[i]->setStyleSheet("background-color: rgb(215, 215, 215);border-radius:10px;");
-            }
-        }
-    });
 }
 
 void MainWindow::OnUpdateToDoListUI(const int& index_character, const QVector<ToDoSingleStruct>& todolist_str)
 {
     clear_ToDoList();
+
+    for(int i = 0; i < m_vect_character.size(); i++)
+    {
+        if(i != index_character)
+        {
+            m_vect_character[i]->setStyleSheet("");
+        }
+        else
+        {
+            m_vect_character[i]->setStyleSheet("background-color: rgb(215, 215, 215);border-radius:10px;");
+        }
+    }
 
     for(auto todo_struct : todolist_str)
     {
@@ -221,9 +234,47 @@ void MainWindow::OnUpdateToDoListUI(const int& index_character, const QVector<To
     }
 }
 
-void MainWindow::on_action_3_triggered()
+void MainWindow::SetUpdateUrl(const QString& url)
 {
-//    QMessageBox::StandardButton _button  = QMessageBox::question(this, "请求确认", "确定到周三了嘛，要清空了哦~", QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll, QMessageBox::NoButton);
+    m_update_url = url;
+}
+
+void MainWindow::SetFinished()
+{
+    //设置更新文件地址
+    m_downloadFile->SetUrl(m_update_url);
+
+    QFileInfo _fileInfo;
+
+    _fileInfo.setFile(m_config_path);
+    if(!_fileInfo.isFile())
+    {
+        // 设置文件不存在
+        // 从网络下载更新
+        m_downloadFile->start();
+    }
+    else
+    {
+        read_AllToDoList(m_config_path);
+    }
+
+    _fileInfo.setFile(m_finished_config_path);
+    if(_fileInfo.isFile())
+    {
+        read_finished_data(m_finished_config_path);
+    }
+}
+
+
+void MainWindow::on_open_config_dir_triggered()
+{
+    QDesktopServices::openUrl(QUrl("file:" + m_savefile_dir_path, QUrl::TolerantMode));
+}
+
+
+void MainWindow::on_clean_finished_status_triggered()
+{
+
 
     QMessageBox _two_week_check_msgbox = QMessageBox(this);
     _two_week_check_msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel);
@@ -264,8 +315,15 @@ void MainWindow::on_action_3_triggered()
 }
 
 
-void MainWindow::on_action_4_triggered()
+void MainWindow::on_add_character_triggered()
 {
-    QDesktopServices::openUrl(QUrl("file:" + m_savefile_dir_path, QUrl::TolerantMode));
+    Character* _new_character = new Character(m_vect_character.size(), m_AllToDoList, this);
+    AddNewCharacter(_new_character);
+}
+
+
+void MainWindow::on_update_config_triggered()
+{
+    m_downloadFile->start();
 }
 

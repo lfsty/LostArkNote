@@ -21,6 +21,9 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QAbstractButton>
+#include "downloadfile.h"
+#include "BASEFUNCTION.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -41,21 +44,35 @@ private:
     QVector<ToDoSingleStruct> m_AllToDoList;
 private:
     void read_AllToDoList(const QString& file_path);
-    void read_ExistData(const QString& file_path);
+    void read_finished_data(const QString& file_path);
     void clear_ToDoList();
+    void update_Config(const QByteArray& data);
 private slots:
-    void on_action_triggered();
+
     void closeEvent(QCloseEvent* event);
     void OnUpdateToDoListUI(const int& index_character, const QVector<ToDoSingleStruct>& todolist_str);
     void OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct);
     void AddNewCharacter(Character* new_character);
-    void on_action_3_triggered();
+    void on_open_config_dir_triggered();
 
-    void on_action_4_triggered();
+    void on_clean_finished_status_triggered();
+
+    void on_add_character_triggered();
+
+    void on_update_config_triggered();
 
 private:
     //文件存储相关
     QString m_savefile_dir_path;
+    //副本相关文件保存地址
+    QString m_config_path;
+    //完成情况文件保存地址
+    QString m_finished_config_path;
+    QString m_update_url;
+    DownloadFile* m_downloadFile = nullptr;
+public:
+    void SetUpdateUrl(const QString& url);
+    void SetFinished();
 private:
     Ui::MainWindow* ui;
 };

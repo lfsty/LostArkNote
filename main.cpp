@@ -16,12 +16,16 @@ int main(int argc, char* argv[])
         int _width = _app_setting.value("WindowGeometry/Width").toInt();
         int _x = _app_setting.value("WindowGeometry/X").toInt();
         int _y = _app_setting.value("WindowGeometry/Y").toInt();
+        QString _updateUrl = _app_setting.value("UpdateData/UpdateURL").toString();
         if(_height != 0 && _width != 0)
         {
             w.setGeometry(_x, _y, _width, _height);
         }
+        w.SetUpdateUrl(_updateUrl);
     }
 
+    w.SetFinished();
     w.show();
+
     return a.exec();
 }

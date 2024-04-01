@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,17 +9,21 @@ RC_ICONS = icon.ico
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/basefunction.cpp \
     src/character.cpp \
     src/charactersetting.cpp \
     main.cpp \
     mainwindow.cpp \
+    src/downloadfile.cpp \
     src/todosinglewidget.cpp
 
 HEADERS += \
     src/INFO.h \
+    src/basefunction.h \
     src/character.h \
     src/charactersetting.h \
     mainwindow.h \
+    src/downloadfile.h \
     src/todosinglewidget.h
 
 FORMS += \
@@ -35,5 +39,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += \
-    src.qrc
+RESOURCES +=
