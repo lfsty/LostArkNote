@@ -274,8 +274,6 @@ void MainWindow::on_open_config_dir_triggered()
 
 void MainWindow::on_clean_finished_status_triggered()
 {
-
-
     QMessageBox _two_week_check_msgbox = QMessageBox(this);
     _two_week_check_msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel);
     _two_week_check_msgbox.setWindowTitle("请求确认");
