@@ -5,6 +5,7 @@
 #define DEFAULTCONFIGNAME "config.json"
 #define DEFAULTFINISHEDDATANAME "data.json"
 #define DEFAULTAPPCONFIGNAME "config.ini"
+#define DEFAULTUPDATECONFIGURL "https://raw.githubusercontent.com/lfsty/LostArkNote/main/doc/DefaultConfig.json"
 
 struct ToDoSingleStruct
 {

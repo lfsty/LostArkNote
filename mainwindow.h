@@ -61,6 +61,8 @@ private slots:
 
     void on_update_config_triggered();
 
+    void on_open_app_config_dir_triggered();
+
 private:
     //文件存储相关
     QString m_savefile_dir_path;
@@ -73,6 +75,7 @@ private:
 public:
     void SetUpdateUrl(const QString& url);
     void SetFinished();
+    void SetDefaultConfigDir(const QString& dir_path);
 private:
     Ui::MainWindow* ui;
 };

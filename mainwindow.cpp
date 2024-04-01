@@ -12,19 +12,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_downloadFile = new DownloadFile(this);
 
-    //获取可读写位置
-    m_savefile_dir_path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    QDir _dir(m_savefile_dir_path);
-    if(!_dir.exists(m_savefile_dir_path))
-    {
-        _dir.mkdir(m_savefile_dir_path);
-    }
-
-    //默认副本设置文件保存地址
-    m_config_path = _dir.absoluteFilePath(DEFAULTCONFIGNAME);
-    //默认角色及副本完成情况保存地址
-    m_finished_config_path = _dir.absoluteFilePath(DEFAULTFINISHEDDATANAME);
-
     connect(m_downloadFile, &DownloadFile::downloadFinished, this, &MainWindow::update_Config);
 }
 
@@ -163,8 +150,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
         _allCharacter_status_obj.append(item->GenSaveFile());
     }
     QJsonDocument _save_json(_allCharacter_status_obj);
-
-    QDir _dir(m_savefile_dir_path);
     QFile _save_finish_data(m_finished_config_path);
     if(!_save_finish_data.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
@@ -177,12 +162,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
     }
 
 
+    QDir _dir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
     QString _existed_ini_path = _dir.absoluteFilePath(DEFAULTAPPCONFIGNAME);
     QSettings _app_setting(_existed_ini_path, QSettings::IniFormat);
     _app_setting.setValue("WindowGeometry/Height", this->height());
     _app_setting.setValue("WindowGeometry/Width", this->width());
     _app_setting.setValue("WindowGeometry/X", this->x());
     _app_setting.setValue("WindowGeometry/Y", this->y());
+
+    _app_setting.setValue("DataConfig/RootPath", m_savefile_dir_path);
 }
 
 void MainWindow::OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct)
@@ -265,6 +253,20 @@ void MainWindow::SetFinished()
     }
 }
 
+void MainWindow::SetDefaultConfigDir(const QString& dir_path)
+{
+    m_savefile_dir_path = dir_path;
+    QDir _dir(m_savefile_dir_path);
+    if(!_dir.exists(m_savefile_dir_path))
+    {
+        _dir.mkdir(m_savefile_dir_path);
+    }
+    //默认副本设置文件保存地址
+    m_config_path = _dir.absoluteFilePath(DEFAULTCONFIGNAME);
+    //默认角色及副本完成情况保存地址
+    m_finished_config_path = _dir.absoluteFilePath(DEFAULTFINISHEDDATANAME);
+}
+
 
 void MainWindow::on_open_config_dir_triggered()
 {
@@ -323,5 +325,11 @@ void MainWindow::on_add_character_triggered()
 void MainWindow::on_update_config_triggered()
 {
     m_downloadFile->start();
+}
+
+
+void MainWindow::on_open_app_config_dir_triggered()
+{
+    QDesktopServices::openUrl(QUrl("file:" + QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation), QUrl::TolerantMode));
 }
 
