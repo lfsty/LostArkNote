@@ -32,6 +32,7 @@ Character::Character(const int& index_character, const QVector<ToDoSingleStruct>
                     m_character_score = new_character_score;
                 }
                 updateLeftStatusDisplay();
+                emit sig_character_checked(m_index_character, m_AllToDoList);
             }
         });
 
