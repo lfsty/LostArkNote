@@ -23,6 +23,7 @@
 #include <QAbstractButton>
 #include "downloadfile.h"
 #include "BASEFUNCTION.h"
+#include "overview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -62,6 +63,8 @@ private slots:
     void on_update_config_triggered();
 
     void on_open_app_config_dir_triggered();
+
+    void on_overview_triggered();
 
 private:
     //文件存储相关

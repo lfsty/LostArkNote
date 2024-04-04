@@ -334,3 +334,26 @@ void MainWindow::on_open_app_config_dir_triggered()
     QDesktopServices::openUrl(QUrl("file:" + QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation), QUrl::TolerantMode));
 }
 
+
+void MainWindow::on_overview_triggered()
+{
+    QVector<CharacterToDoListStruct> _tmp_data;
+
+    for(const auto& item : m_vect_character)
+    {
+
+        CharacterToDoListStruct _single_character_data;
+        _single_character_data.nick_name = item->GetCharaterNickName();
+        _single_character_data.character_score = item->GetCharacterScore();
+        _single_character_data.todo_struct_vect = item->GetUnfinishedData();
+        if(_single_character_data.todo_struct_vect.isEmpty())
+            continue;
+        _tmp_data.push_back(_single_character_data);
+    }
+
+
+    Overview::GetInstance()->SetUnfinishedData(_tmp_data);
+    Overview::GetInstance()->show();
+
+}
+

@@ -136,6 +136,30 @@ void Character::ClearAllFinished(bool is_two_week)
     updateLeftStatusDisplay();
 }
 
+QString Character::GetCharaterNickName()
+{
+    return m_character_nick_name;
+}
+
+double Character::GetCharacterScore()
+{
+    return m_character_score;
+}
+
+const QVector<ToDoSingleStruct> Character::GetUnfinishedData()
+{
+    QVector<ToDoSingleStruct> _unfinished_data;
+
+    for(const auto& item : m_AllToDoList){
+        if(m_character_score >= item.low_limit && m_character_score < item.high_limit && item.is_finished == false)
+        {
+            _unfinished_data.push_back(item);
+        }
+    }
+
+    return _unfinished_data;
+}
+
 //更新左侧的信息显示
 void Character::updateLeftStatusDisplay()
 {

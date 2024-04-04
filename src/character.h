@@ -41,6 +41,10 @@ public:
     QJsonObject GenSaveFile();
     void SetCharacterIndex(const int& index);
     void ClearAllFinished(bool is_two_week);
+    QString GetCharaterNickName();
+    double GetCharacterScore();
+
+    const QVector<ToDoSingleStruct> GetUnfinishedData();
 private:
     //UI相关
     QMenu m_menu;

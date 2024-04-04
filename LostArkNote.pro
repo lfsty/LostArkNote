@@ -15,6 +15,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     src/downloadfile.cpp \
+    src/overview.cpp \
     src/todosinglewidget.cpp
 
 HEADERS += \
@@ -24,12 +25,14 @@ HEADERS += \
     src/charactersetting.h \
     mainwindow.h \
     src/downloadfile.h \
+    src/overview.h \
     src/todosinglewidget.h
 
 FORMS += \
     src/character.ui \
     src/charactersetting.ui \
     mainwindow.ui \
+    src/overview.ui \
     src/todosinglewidget.ui
 
 INCLUDEPATH += ./src
