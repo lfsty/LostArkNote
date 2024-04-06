@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QLockFile>
+
+#define LOCKFILENAME "LostArkNoteLock"
 
 int main(int argc, char* argv[])
 {
@@ -8,10 +11,21 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
+    const QString _default_config_dir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QDir _dir(_default_config_dir);
+
+
+    //程序锁，仅允许打开一个程序
+    QLockFile _lockapp(_dir.absoluteFilePath(LOCKFILENAME));
+    if(!_lockapp.tryLock())
+    {
+        qDebug() << "程序已打开";
+        return 0;
+    }
+
+
     {
         //记忆上次打开位置
-        const QString _default_config_dir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-        QDir _dir(_default_config_dir);
         QSettings _app_setting(_dir.absoluteFilePath(DEFAULTAPPCONFIGNAME), QSettings::IniFormat);
         int _height = _app_setting.value("WindowGeometry/Height").toInt();
         int _width = _app_setting.value("WindowGeometry/Width").toInt();
