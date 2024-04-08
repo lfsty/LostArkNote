@@ -77,6 +77,7 @@ private:
     DownloadFile* m_downloadFile = nullptr;
 public:
     void SetUpdateUrl(const QString& url);
+    void ClearAllFinished(bool is_two_week);
     void SetFinished();
     void SetDefaultConfigDir(const QString& dir_path);
 private:

@@ -228,6 +228,15 @@ void MainWindow::SetUpdateUrl(const QString& url)
     m_update_url = url;
 }
 
+void MainWindow::ClearAllFinished(bool is_two_week)
+{
+    for(int i = 0; i < m_vect_character.size(); i++)
+    {
+        m_vect_character[i]->ClearAllFinished(is_two_week);
+    }
+    clear_ToDoList();
+}
+
 void MainWindow::SetFinished()
 {
     //设置更新文件地址
@@ -290,21 +299,13 @@ void MainWindow::on_clean_finished_status_triggered()
         case QMessageBox::Yes:
             {
                 //单周
-                for(int i = 0; i < m_vect_character.size(); i++)
-                {
-                    m_vect_character[i]->ClearAllFinished(false);
-                }
-                clear_ToDoList();
+                ClearAllFinished(false);
                 break;
             }
         case QMessageBox::YesToAll:
             {
                 //双周
-                for(int i = 0; i < m_vect_character.size(); i++)
-                {
-                    m_vect_character[i]->ClearAllFinished(true);
-                }
-                clear_ToDoList();
+                ClearAllFinished(true);
                 break;
             }
         case QMessageBox::Cancel:
@@ -312,7 +313,6 @@ void MainWindow::on_clean_finished_status_triggered()
                 break;
             }
     }
-
 }
 
 

@@ -7,6 +7,8 @@
 #define DEFAULTFINISHEDDATANAME "data.json"
 #define DEFAULTAPPCONFIGNAME "config.ini"
 #define DEFAULTUPDATECONFIGURL "https://raw.githubusercontent.com/lfsty/LostArkNote/main/doc/DefaultConfig.json"
+#define DEFAULTUPDATETIME "2024-04-10 06:00:00"
+#define DEFAULEISTWOWEEK true
 
 struct ToDoSingleStruct
 {
