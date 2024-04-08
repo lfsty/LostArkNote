@@ -9,6 +9,7 @@ RC_ICONS = icon.ico
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/about.cpp \
     src/basefunction.cpp \
     src/character.cpp \
     src/charactersetting.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 
 HEADERS += \
     src/INFO.h \
+    src/about.h \
     src/basefunction.h \
     src/character.h \
     src/charactersetting.h \
@@ -29,6 +31,7 @@ HEADERS += \
     src/todosinglewidget.h
 
 FORMS += \
+    src/about.ui \
     src/character.ui \
     src/charactersetting.ui \
     mainwindow.ui \

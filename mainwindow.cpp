@@ -350,10 +350,13 @@ void MainWindow::on_overview_triggered()
             continue;
         _tmp_data.push_back(_single_character_data);
     }
-
-
     Overview::GetInstance()->SetUnfinishedData(_tmp_data);
     Overview::GetInstance()->show();
+}
 
+
+void MainWindow::on_actionAbout_triggered()
+{
+    About::GetInstance()->show();
 }
 

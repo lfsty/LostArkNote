@@ -9,6 +9,7 @@
 int main(int argc, char* argv[])
 {
     QCoreApplication::setApplicationName("LostArkNote");
+    QCoreApplication::setApplicationVersion("0.2.7");
     QApplication a(argc, argv);
     MainWindow w;
 
@@ -23,8 +24,6 @@ int main(int argc, char* argv[])
         qDebug() << "程序已打开";
         return 0;
     }
-
-
 
     //记忆上次打开位置
     QSettings _app_setting(_dir.absoluteFilePath(DEFAULTAPPCONFIGNAME), QSettings::IniFormat);
@@ -93,7 +92,6 @@ int main(int argc, char* argv[])
             }
         }
     }
-
 
     w.SetFinished();
     w.show();
