@@ -9,7 +9,7 @@
 int main(int argc, char* argv[])
 {
     QCoreApplication::setApplicationName("LostArkNote");
-    QCoreApplication::setApplicationVersion("0.2.7");
+    QCoreApplication::setApplicationVersion(VERSION);
     QApplication a(argc, argv);
     MainWindow w;
 
