@@ -9,7 +9,7 @@
 #define DEFAULTUPDATECONFIGURL "https://raw.githubusercontent.com/lfsty/LostArkNote/main/doc/DefaultConfig.json"
 #define DEFAULTUPDATETIME "2024-04-10 06:00:00"
 #define DEFAULEISTWOWEEK true
-#define VERSION "0.2.7"
+#define VERSION "0.2.7.1"
 
 struct ToDoSingleStruct
 {
@@ -26,6 +26,14 @@ struct CharacterToDoListStruct
     QString nick_name;
     double character_score;
     QVector<ToDoSingleStruct> todo_struct_vect;
+};
+
+struct OnCloseData
+{
+    int width;
+    int height;
+    int x;
+    int y;
 };
 
 #endif // INFO_H

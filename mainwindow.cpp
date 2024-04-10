@@ -163,15 +163,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
     }
 
 
-    QDir _dir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-    QString _existed_ini_path = _dir.absoluteFilePath(DEFAULTAPPCONFIGNAME);
-    QSettings _app_setting(_existed_ini_path, QSettings::IniFormat);
-    _app_setting.setValue("WindowGeometry/Height", this->height());
-    _app_setting.setValue("WindowGeometry/Width", this->width());
-    _app_setting.setValue("WindowGeometry/X", this->x());
-    _app_setting.setValue("WindowGeometry/Y", this->y());
-
-    _app_setting.setValue("DataConfig/RootPath", m_savefile_dir_path);
+    OnCloseData _close_data;
+    _close_data.height = this->height();
+    _close_data.width = this->width();
+    _close_data.x = this->x();
+    _close_data.y = this->y();
+    emit OnWindowCloseData(_close_data);
 }
 
 void MainWindow::OnUpdateToDoListFinished(const int& index_character, const ToDoSingleStruct& todo_list_struct)

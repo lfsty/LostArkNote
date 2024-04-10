@@ -7,7 +7,6 @@
 #include "INFO.h"
 #include <QVector>
 #include <QMap>
-#include <QSettings>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonParseError>
@@ -83,6 +82,8 @@ public:
     void ClearAllFinished(bool is_two_week);
     void SetFinished();
     void SetDefaultConfigDir(const QString& dir_path);
+signals:
+    void OnWindowCloseData(const OnCloseData);
 private:
     Ui::MainWindow* ui;
 };

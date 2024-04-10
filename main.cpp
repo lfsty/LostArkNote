@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QLockFile>
 #include <QDateTime>
+#include <QSettings>
 
 #define LOCKFILENAME "LostArkNoteLock"
 
@@ -33,6 +34,13 @@ int main(int argc, char* argv[])
     int _y = _app_setting.value("WindowGeometry/Y").toInt();
     if(_height != 0 && _width != 0)
         w.setGeometry(_x, _y, _width, _height);
+    QObject::connect(&w, &MainWindow::OnWindowCloseData, [&](OnCloseData _close_data)
+    {
+        _app_setting.setValue("WindowGeometry/Height", _close_data.height);
+        _app_setting.setValue("WindowGeometry/Width", _close_data.width);
+        _app_setting.setValue("WindowGeometry/X", _close_data.x);
+        _app_setting.setValue("WindowGeometry/Y", _close_data.y);
+    });
 
     //配置文件更新地址
     QString _updateUrl;
@@ -50,6 +58,10 @@ int main(int argc, char* argv[])
     //默认配置保存目录
     QString _config_dir = _app_setting.value("DataConfig/RootPath").toString();
     w.SetDefaultConfigDir(_config_dir.isEmpty() ? _default_config_dir : _config_dir);
+    if(_config_dir.isEmpty())
+    {
+        _app_setting.setValue("DataConfig/RootPath", _default_config_dir);
+    }
 
     //游戏更新周期
     QString _update_time;
