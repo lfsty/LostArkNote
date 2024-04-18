@@ -48,6 +48,7 @@ void Overview::SetUnfinishedData(const QVector<CharacterToDoListStruct>& unfinis
         {
             ui->m_textEdit_overview->append(iter.key() + ":  " + "<font color=\"#FF0000\">" + QString::number(iter.value()) + "个" + "</font>");
         }
+        ui->m_textEdit_overview->insertPlainText("\n");
     }
 
 }
