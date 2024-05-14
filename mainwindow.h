@@ -24,6 +24,7 @@
 #include "BASEFUNCTION.h"
 #include "overview.h"
 #include "about.h"
+#include <QDesktopServices>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -48,6 +49,7 @@ private:
     void read_finished_data(const QString& file_path);
     void clear_ToDoList();
     void update_Config(const QByteArray& data);
+    void update_IncomePng(const QByteArray& data);
 private slots:
 
     void closeEvent(QCloseEvent* event);
@@ -68,17 +70,24 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_open_income_img_triggered();
+
 private:
     //文件存储相关
     QString m_savefile_dir_path;
     //副本相关文件保存地址
     QString m_config_path;
+    //副本收益图片保存地址
+    QString m_income_path;
     //完成情况文件保存地址
     QString m_finished_config_path;
     QString m_update_url;
-    DownloadFile* m_downloadFile = nullptr;
+    QString m_income_url;
+    DownloadFile* m_downloadFile_config = nullptr;
+    DownloadFile* m_downloadFile_income = nullptr;
 public:
     void SetUpdateUrl(const QString& url);
+    void SetIncomeUrl(const QString& url);
     void ClearAllFinished(bool is_two_week);
     void SetFinished();
     void SetDefaultConfigDir(const QString& dir_path);

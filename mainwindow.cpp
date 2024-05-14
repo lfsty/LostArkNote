@@ -10,15 +10,18 @@ MainWindow::MainWindow(QWidget* parent)
     ui->splitter->setStretchFactor(0, 3);
     ui->splitter->setStretchFactor(1, 7);
 
-    m_downloadFile = new DownloadFile(this);
+    m_downloadFile_config = new DownloadFile(this);
+    m_downloadFile_income = new DownloadFile(this);
 
-    connect(m_downloadFile, &DownloadFile::downloadFinished, this, &MainWindow::update_Config);
+    connect(m_downloadFile_config, &DownloadFile::downloadFinished, this, &MainWindow::update_Config);
+    connect(m_downloadFile_income, &DownloadFile::downloadFinished, this, &MainWindow::update_IncomePng);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    m_downloadFile->deleteLater();
+    m_downloadFile_config->deleteLater();
+    m_downloadFile_income->deleteLater();
 }
 
 //读取副本配置信息
@@ -139,8 +142,21 @@ void MainWindow::update_Config(const QByteArray& data)
         {
             iter->UpdateAllToDoListVector(m_AllToDoList);
         }
+
+        //更新副本收益图
+        m_downloadFile_income->start();
     }
 
+}
+
+void MainWindow::update_IncomePng(const QByteArray& data)
+{
+    QFile _file(m_income_path);
+    if (_file.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        _file.write(data);
+        _file.close();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -225,6 +241,11 @@ void MainWindow::SetUpdateUrl(const QString& url)
     m_update_url = url;
 }
 
+void MainWindow::SetIncomeUrl(const QString& url)
+{
+    m_income_url = url;
+}
+
 void MainWindow::ClearAllFinished(bool is_two_week)
 {
     for(int i = 0; i < m_vect_character.size(); i++)
@@ -237,7 +258,8 @@ void MainWindow::ClearAllFinished(bool is_two_week)
 void MainWindow::SetFinished()
 {
     //设置更新文件地址
-    m_downloadFile->SetUrl(m_update_url);
+    m_downloadFile_config->SetUrl(m_update_url);
+    m_downloadFile_income->SetUrl(m_income_url);
 
     QFileInfo _fileInfo;
 
@@ -246,11 +268,17 @@ void MainWindow::SetFinished()
     {
         // 设置文件不存在
         // 从网络下载更新
-        m_downloadFile->start();
+        m_downloadFile_config->start();
     }
     else
     {
         read_AllToDoList(m_config_path);
+    }
+
+    _fileInfo.setFile(m_income_path);
+    if(!_fileInfo.isFile())
+    {
+        m_downloadFile_income->start();
     }
 
     _fileInfo.setFile(m_finished_config_path);
@@ -272,6 +300,8 @@ void MainWindow::SetDefaultConfigDir(const QString& dir_path)
     m_config_path = _dir.absoluteFilePath(DEFAULTCONFIGNAME);
     //默认角色及副本完成情况保存地址
     m_finished_config_path = _dir.absoluteFilePath(DEFAULTFINISHEDDATANAME);
+    //默认副本收益保存地址
+    m_income_path = _dir.absoluteFilePath(DEFAULTINCOMEIMGNAME);
 }
 
 
@@ -322,7 +352,7 @@ void MainWindow::on_add_character_triggered()
 
 void MainWindow::on_update_config_triggered()
 {
-    m_downloadFile->start();
+    m_downloadFile_config->start();
 }
 
 
@@ -355,5 +385,24 @@ void MainWindow::on_overview_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     About::GetInstance()->show();
+}
+
+
+void MainWindow::on_open_income_img_triggered()
+{
+    QFileInfo _fileInfo;
+    _fileInfo.setFile(m_income_path);
+    if(!_fileInfo.isFile())
+    {
+        if(m_downloadFile_income->isRunning() == false)
+        {
+            m_downloadFile_income->start();
+        }
+        QMessageBox::information(this, "提示", "收益图还在下载中，过段时间再试试哦~");
+    }
+    else
+    {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(m_income_path));
+    }
 }
 

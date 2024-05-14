@@ -126,6 +126,8 @@ ToDoSingleWidget:hover#ToDoSingleWidget
     <addaction name="separator"/>
     <addaction name="clean_finished_status"/>
     <addaction name="overview"/>
+    <addaction name="separator"/>
+    <addaction name="open_income_img"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -179,6 +181,11 @@ ToDoSingleWidget:hover#ToDoSingleWidget
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="open_income_img">
+   <property name="text">
+    <string>打开收益图</string>
    </property>
   </action>
  </widget>

@@ -54,6 +54,18 @@ int main(int argc, char* argv[])
         _updateUrl = DEFAULTUPDATECONFIGURL;
     }
     w.SetUpdateUrl(_updateUrl);
+    //副本收益更新地址
+    QString _updateIncomeUrl;
+    if(_app_setting.contains("UpdateData/IncomeURL"))
+    {
+        _updateIncomeUrl = _app_setting.value("UpdateData/IncomeURL").toString();
+    }
+    else
+    {
+        _app_setting.setValue("UpdateData/IncomeURL", DEFAULTUPDATEINCOMEURL);
+        _updateIncomeUrl = DEFAULTUPDATEINCOMEURL;
+    }
+    w.SetIncomeUrl(_updateIncomeUrl);
 
     //默认配置保存目录
     QString _config_dir = _app_setting.value("DataConfig/RootPath").toString();

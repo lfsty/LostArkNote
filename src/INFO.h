@@ -7,10 +7,12 @@
 #define DEFAULTFINISHEDDATANAME "data.json"
 #define DEFAULTAPPCONFIGNAME "config.ini"
 #define DEFAULTUPDATECONFIGNAME "update.ini"
+#define DEFAULTINCOMEIMGNAME "income.png"
 #define DEFAULTUPDATECONFIGURL "https://raw.githubusercontent.com/lfsty/LostArkNote/main/doc/DefaultConfig.json"
+#define DEFAULTUPDATEINCOMEURL "https://raw.githubusercontent.com/lfsty/LostArkNote/main/doc/income.png"
 #define DEFAULTUPDATETIME "2024-04-10 06:00:00"
 #define DEFAULEISTWOWEEK true
-#define VERSION "0.2.7.3"
+#define VERSION "0.2.8"
 
 struct ToDoSingleStruct
 {
