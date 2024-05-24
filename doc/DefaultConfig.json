@@ -1,6 +1,6 @@
 {
-    "version":1,
-    "version_note":"困梦",
+    "version":2,
+    "version_note":"天界",
     "data":[
         {
             "name":"艾伯利亚古遗迹",
@@ -63,6 +63,14 @@
             "name":"困难 梦幻军团长-阿布莱修德 4",
             "limit":[1560,99999],
             "twoWeek":true
+        },
+        {
+            "name":"普通 卡杨格尔",
+            "limit":[1540,1580]
+        },
+        {
+            "name":"困难 卡杨格尔",
+            "limit":[1580,99999]
         }
     ]    
 }
